@@ -1,38 +1,90 @@
 module BasicStats
 
-"""
-    average(data::AbstractVector{<:Number})
 
-Calculate the average (mean) of the numeric vector `data`.
 """
-function average(data::AbstractVector{<:Number})
-    n = length(data)
+    Parameters
+    ----------
+    data::Array{<:Number, 1}
+        1次元の数値データ
+
+    Returns
+    -------
+    <:Number
+        数値データの平均値
+
+データに対する平均値を計算する
+"""
+function average(data::Array{T, 1}) where {T<:Number}
+    # データ数が足りない場合にはエラー
+    n::Int64 = length(data)
     if n == 0
         throw(ArgumentError("Cannot compute average of empty data"))
     end
-    s = zero(eltype(data))
+
+    # 平均値の計算
+    s::Number = zero(eltype(data))
     for x in data
         s += x
     end
     return s / n
 end
 
-"""
-    sd(data::AbstractVector{<:Number})
 
-Calculate the standard deviation of the numeric vector `data`.
 """
-function sd(data::AbstractVector{<:Number})
-    n = length(data)
-    if n < 2
+    Parameters
+    ----------
+    data::Array{T, 1} where {T<:Number}
+        1行の数値データ
+
+    Returns
+    -------
+    <:Number
+        数値データの標準偏差
+
+データに対する標準偏差を計算する
+"""
+function sd(data::Array{T, 1}) where {T<:Number}
+    # データ数が足りない場合にはエラー
+    n::Int64 = length(data)
+    if n <= 1
         throw(ArgumentError("At least two data points are required to compute standard deviation"))
     end
-    u = average(data)
-    ssd = zero(eltype(data))
+
+    # 標準偏差の計算
+    u::<:Number = average(data)
+    ssd::<:Number = zero(eltype(data))
     for x in data
         ssd += (x - u)^2
     end
     return sqrt(ssd / (n - 1))
+end
+
+
+"""
+    Parameters
+    ----------
+    data::Array{T, N} where {T<:Number, N}
+        行がラベル、列がデータベクトルとなっている標準化されたデータ行列
+
+    Returns
+    -------
+    Array{T, N} where {T<:Number, N}
+        分散共分散行列
+
+データ行列に対する分散共分散行列を計算する
+"""
+function var_cov_matrix(data::Array{T, N}) where {T<:Number, N}
+    # データの次元数
+    d = size(data, 2)
+
+    # 平均を引く
+    mean_data = mean(data, dims=1)
+    centered_data = data .- mean_data
+
+    # 共分散行列の計算
+    cov_matrix = (centered_data' * centered_data) / (size(data, 1) - 1)
+
+    return cov_matrix
 end
 
 end
