@@ -3,11 +3,8 @@ using Random: rand, seed!
 using Distributions: Normal
 
 # local module
-include("../commons/basic_stats.jl")
-using .BasicStats: average, sd, var_cov_matrix
-
-include("../commons/pca.jl")
-using .Pca: pca
+include("../commons/basic.jl")
+using .Basic: average, sd, var_cov_matrix
 
 seed!(123)
 
@@ -53,4 +50,4 @@ plot!(
     lw=1,
     # linestyle=:dash
 )
-savefig(p, "./data/pca.png")
+savefig(p, "./images/pca.png")

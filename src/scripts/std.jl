@@ -3,8 +3,8 @@ using Random: rand, seed!
 using Distributions: Normal
 
 # local module
-include("../commons/basic_stats.jl")
-using .BasicStats: average, sd
+include("../commons/basic.jl")
+using .Basic: average, sd
 
 seed!(123)
 
@@ -29,4 +29,4 @@ p = scatter(
     # xlims = (-1, 1),
     # ylims = (-3, 3),
 )
-savefig(p, "./data/plot_std.png")
+savefig(p, "./images/plot_std.png")
