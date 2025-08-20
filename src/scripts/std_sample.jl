@@ -3,8 +3,8 @@ using Random: rand, seed!
 using Distributions: Normal
 
 # local module
-include("../commons/basic.jl")
-using .Basic: average, sd
+include("../commons/statistics.jl")
+using .Statistics: average, sd
 
 seed!(123)
 
@@ -16,6 +16,7 @@ n = 500  # 点の数
 x_list = rand(Normal(0, σx), n)
 y_list = 2 .* x_list .+ rand(Normal(0, σy), n)
 
+# 標準化を行う
 x_list = (x_list .- average(x_list)) ./ sd(x_list)
 y_list = (y_list .- average(y_list)) ./ sd(y_list)
 

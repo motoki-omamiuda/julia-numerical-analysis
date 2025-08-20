@@ -1,4 +1,4 @@
-module Basic
+module Statistics
 
 
 """

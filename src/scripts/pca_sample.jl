@@ -3,8 +3,8 @@ using Random: rand, seed!
 using Distributions: Normal
 
 # local module
-include("../commons/basic.jl")
-using .Basic: average, sd, var_cov_matrix
+include("../commons/statistics.jl")
+using .Statistics: average, sd, var_cov_matrix
 
 seed!(123)
 
@@ -26,11 +26,11 @@ y_list = (y_list .- average(y_list)) ./ sd(y_list)
 data = vcat(x_list', y_list')
 print(data)
 
-# 共分散行列
+# 共分散行列の計算
 cov_matrix = var_cov_matrix(data)
 println(cov_matrix)
 
-# PCA
+# 固有値問題を解く
 breakpoint()
 
 p = scatter(
