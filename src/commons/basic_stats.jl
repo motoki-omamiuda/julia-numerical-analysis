@@ -9,7 +9,7 @@ module BasicStats
     1次元の数値データ
 
 # Returns
-- <:Number:
+- Number:
     数値データの平均値
 """
 function average(data::Array{T, 1}) where {T<:Number}
@@ -36,7 +36,7 @@ end
     1行の数値データ
 
 # Returns
-- <:Number:
+- Number:
     数値データの標準偏差
 """
 function sd(data::Array{T, 1}) where {T<:Number}
@@ -60,11 +60,11 @@ end
 データ行列に対する分散共分散行列を計算する
 
 # Arguments
-- data::Array{T, N} where {T<:Number, N}:
-    行がラベル、列がデータベクトルとなっている標準化されたデータ行列
+- data::Matrix{T} where {T<:Number}:
+    行がラベル、列がデータベクトルとなっているデータ行列
 
 # Returns
-- Array{T, N} where {T<:Number, N}:
+- Array{T, N} where {T<:Number, N<:Number}:
     分散共分散行列
 
 # Examples
@@ -76,18 +76,21 @@ data::Array{Float64, 2} = [
 var_cov_matrix(data=data)
 ```
 """
-function var_cov_matrix(data::Array{T, N}) where {T<:Number, N}
-    # データの次元数
-    d = size(data, 2)
+function var_cov_matrix(data::Matrix{T}) where {T<:Number}
+    row::Int64 = size(data, 1) # 行数を取得
+    column::Int64 = size(data, 2) # 列数を取得
 
-    # 平均を引く
-    mean_data = mean(data, dims=1)
-    centered_data = data .- mean_data
+    # データの平均ベクトルを計算
+    means::Array{<:Number, 1} = [sum(data[i, :]) / column for i in 1:row]
 
-    # 共分散行列の計算
-    cov_matrix = (centered_data' * centered_data) / (size(data, 1) - 1)
-
-    return cov_matrix
+    # 分散共分散行列を計算
+    var_cov::Matrix{<:Number} = zeros(row, row)
+    for i in 1:1:column
+        data[:, i] .-= means
+        var_cov += data[:, i] .* transpose(data[:, i])
+    end
+    var_cov /= column
+    return var_cov
 end
 
 end

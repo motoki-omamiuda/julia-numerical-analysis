@@ -4,7 +4,7 @@ using Distributions: Normal
 
 # local module
 include("../commons/basic_stats.jl")
-using .BasicStats: average, sd
+using .BasicStats: average, sd, var_cov_matrix
 
 include("../commons/pca.jl")
 using .Pca: pca
@@ -27,11 +27,11 @@ data = vcat(x_list', y_list')
 x_list = (x_list .- average(x_list)) ./ sd(x_list)
 y_list = (y_list .- average(y_list)) ./ sd(y_list)
 data = vcat(x_list', y_list')
-
 print(data)
 
 # 共分散行列
-cov_matrix = cov(data)
+cov_matrix = var_cov_matrix(data)
+println(cov_matrix)
 
 # PCA
 breakpoint()
