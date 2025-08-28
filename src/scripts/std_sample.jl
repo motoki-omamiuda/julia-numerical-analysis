@@ -4,7 +4,7 @@ using Distributions: Normal
 
 # local module
 include("../commons/statistics.jl")
-using .Statistics: average, sd
+using .MyStatistics: average, sd
 
 seed!(123)
 

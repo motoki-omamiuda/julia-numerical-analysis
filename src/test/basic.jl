@@ -1,6 +1,6 @@
 # local module
 include("../commons/statistics.jl")
-using .Statistics: average, sd, var_cov_matrix
+using .MyStatistics: average, sd, var_cov_matrix
 
 array::Array{Int64, 1} = [1, 2, 3, 4, 5]
 
