@@ -7,6 +7,10 @@ module MyLinearAlgebra
 # Parameters
 - vector::Array{<:Number, 1}
     ノルムを計算するベクトル
+
+# Returns
+- Number:
+    ベクトルのノルム
 """
 function norm(vector::Array{<:Number, 1})
     return sqrt(sum(vector .^ 2))
@@ -14,10 +18,29 @@ end
 
 
 """
+ベクトルの内積を計算する
+
+# Parameters
+- vector_1::Array{<:Number, 1}
+- vector_2::Array{<:Number, 1}
+
+# Returns
+- Number:
+    ベクトルの内積
+"""
+function dot(vector_1::Array{<:Number, 1}, vector_2::Array{<:Number, 1})
+    if length(vector_1) != length(vector_2)
+        throw(ArgumentError("Vectors must be of the same length"))
+    end
+    return sum(vector_1 .* vector_2)
+end
+
+
+"""
 グラムシュミット直交化法を用いて、行列のQR分解を行う
 
 # Parameter
-- matrix::Array{<:Number, 2}
+- mat::Array{<:Number, 2}
     QR分解を行う行列
 
 # Returns
@@ -27,28 +50,26 @@ end
     上三角行列
 
 """
-function qr(matrix::Array{<:Number, 2})
-    m, n = size(matrix)
+function qr(mat::Array{<:Number, 2})
+    m, n = size(mat)
     Q = zeros(m, n)
     R = zeros(n, n)
 
     # Q の各列を計算
-    basis = zeros(m, n)
-    before_Q = zeros(m, n) # 正規化前のQ
-    before_Q[:, 1] = matrix[:, 1]
-    basis[:, 1] = before_Q[:, 1] ./ dot(before_Q[:, 1], before_Q[:, 1])
+    Q[:, 1] = mat[:, 1] ./ norm(mat[:, 1])
     for column in 2:1:n
-        temp_vec = zeros(m)
-        for i in 1:1:column-1
-            temp_vec .+= dot(before_Q[:, i], matrix[:, column]) .* before_Q[:, i] ./ dot(before_Q[:, i], before_Q[:, i])
+        u = zeros(m)
+        for i in column:-1:1
+            u .+= dot(Q[:, i], mat[:, column]) .* Q[:, i]
         end
-        before_Q[:, column] = matrix[:, column] .- temp_vec
+        Q[:, column] = ( mat[:, column] .- u ) ./ norm(mat[:, column] .- u)
     end
 
-    # Q を正規化
-    Q = zeros(m, n)
-    for i in 1:1:n
-        Q[:, i] = before_Q[:, i] ./ norm(before_Q[:, i])
+    # R の各要素を計算
+    for i in 1:1:m
+        for j in i:1:n
+            R[i, j] = dot(Q[:, i], mat[:, j])
+        end
     end
     return Q, R
 end
@@ -58,7 +79,7 @@ end
 QR分解を行い、行列の固有値、固有ベクトルを計算する
 
 # Parameters
-- matrix::Array{<:Number, 2}
+- mat::Array{<:Number, 2}
     QR分解を行う行列
 
 # Returns
@@ -67,8 +88,8 @@ QR分解を行い、行列の固有値、固有ベクトルを計算する
 - eigenvectors::Array{<:Number, 2}
     行列の固有ベクトル
 """
-function eigen(matrix::Array{<:Number, 2})
-    Q, R = qr(matrix)
+function eigen(mat::Array{<:Number, 2})
+    Q, R = qr(mat)
     eigenvalues = diagm(R)
     eigenvectors = Q
     return eigenvalues, eigenvectors
